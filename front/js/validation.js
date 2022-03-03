@@ -21,6 +21,7 @@ const sendData = {
 // Fonction permettant d'envoyer les informations à l'API
 function post() {
   const headers = new Headers();
+  console.log('post')
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
     headers: {
@@ -30,9 +31,7 @@ function post() {
     body: JSON.stringify(sendData),
   })
     .then((res) => res.json())
-    .then((data) => {
-      location.href = `./confirmation.html?orderId=${data.orderId}`;
-    });
+    .then((data) => {location.href = `./confirmation.html?orderId=${data.orderId}`; });
 }
 
 order.onclick = function (event) {
@@ -46,6 +45,7 @@ order.onclick = function (event) {
     // Si il y as une erreur on desactive l'effet du boutton
     event.preventDefault();
   } else {
+    event.preventDefault();
     post();
   }
   // On reset le detecteur d'erreur pour une nouvelle saisie

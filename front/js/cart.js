@@ -66,8 +66,10 @@ function setBasket(basket) {
   localStorage.setItem("basket", JSON.stringify(basket));
 }
 
-function test() {
-  let quantity = document.querySelectorAll("itemQuantity");
+
+
+/**
+  let quantity = document.querySelectorAll(".itemQuantity");
   console.log(quantity)
   onchange.quantity = function (){
     let basket = getBasket();
@@ -79,11 +81,11 @@ function test() {
     color[0].quantity += quantity.value;
     setBasket(basket);
   }
-}
-test();
+*/
+
 /**
-const elementsDelete = document.querySelectorAll("#deleteItem");
-onclick = function test(event) {
+const elementsDelete = document.getElementsByClassName("deleteItem");
+elementsDelete.onclick = function test(event) {
   let a = event.target.closest("article");
   const deleteID = a.dataset.id;
   const deleteColor = a.dataset.color;
@@ -94,4 +96,19 @@ onclick = function test(event) {
   location.reload();
 };
 */
+
+let deleteBtns = document.querySelectorAll(".deleteItem");
+for (let i = 0; i < deleteBtns; i++){
+  deleteBtns[i].addEventListener('click', (event) => {
+    console.log('deleteBtns')
+    let a = event.target.closest("article");
+    const deleteId = a.dataset.id;
+    const deleteColor = a.dataset.color;
+    const porductList = basket.filter((id) => id.id == deleteId);
+    const color = porductList.filter((color) => color.color == deleteColor);
+    basket = basket.filter((p) => p != color[0]);
+    setBasket(basket);
+    locationreload();
+  })
+}
 
