@@ -1,5 +1,39 @@
-let form = document.querySelector('.cart__order__form');
+let form = document.querySelector(".cart__order__form");
 let errorDetection = false;
+
+
+// Récupération de ton les IDs du panier
+const allId = [];
+for (let i of basket) {
+  allId.push(i.id);
+}
+
+// Constante des information contact (qui vont se remplir au moment du onclick sur le panier)
+const contact = { 
+};
+
+// Constante des information à envoyer à l'API
+const sendData = {
+  products: allId,
+  contact: contact,
+};
+
+// Fonction permettant d'envoyer les informations à l'API
+function post() {
+  const headers = new Headers();
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(sendData),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      location.href = `./confirmation.html?orderId=${data.orderId}`;
+    });
+}
 
 order.onclick = function (event) {
   validFirstName(form.firstName);
@@ -12,30 +46,21 @@ order.onclick = function (event) {
     // Si il y as une erreur on desactive l'effet du boutton
     event.preventDefault();
   } else {
-    let contactInfo = {
-      firstName: form.firstName,
-      lastName: form.lastName,
-      address: form.adress,
-      city: form.city,
-      email: form.email,
-    };
-    console.log(contactInfo);
+    post();
   }
   // On reset le detecteur d'erreur pour une nouvelle saisie
   errorDetection = false;
-}
+};
 
 // Fonction validation prénom
 const validFirstName = function (inputFirstName) {
   //Création regex prénom
-  let firstNameRegex = RegExp(
-    "^[a-zA-Z-]{3,30}$",
-    "g"
-  );
+  let firstNameRegex = RegExp("^[a-zA-Z-]{3,30}$", "g");
   let testFirstName = firstNameRegex.test(inputFirstName.value);
   let msg = document.getElementById("firstNameErrorMsg");
   if (testFirstName) {
     msg.innerHTML = "";
+    contact.firstName = form.firstName.value;
   } else {
     msg.innerHTML = "Veuillez saisir un prénom correcte (pas de nombre)";
     errorDetection = true;
@@ -45,14 +70,12 @@ const validFirstName = function (inputFirstName) {
 // Fonction validation nom
 const validLastName = function (inputLastName) {
   //Création regex nom
-  let lastNameRegex = RegExp(
-    "^[a-zA-Z- ]{3,30}$",
-    "g"
-  );
+  let lastNameRegex = RegExp("^[a-zA-Z- ]{3,30}$", "g");
   let testLastName = lastNameRegex.test(inputLastName.value);
   let msg = document.getElementById("lastNameErrorMsg");
   if (testLastName) {
     msg.innerHTML = "";
+    contact.lastName = form.lastName.value;
   } else {
     msg.innerHTML = "Veuillez saisir un nom correcte (pas de nombre)";
     errorDetection = true;
@@ -102,6 +125,7 @@ const validAddress = function (inputAddress) {
     testAddress6
   ) {
     msg.innerHTML = "";
+    contact.address = form.address.value;
   } else {
     msg.innerHTML = "Adresse incorrecte. Exemple: 10, Rue des Mimosas";
     errorDetection = true;
@@ -111,14 +135,12 @@ const validAddress = function (inputAddress) {
 // Fonction validation ville
 const validCity = function (inputCity) {
   //Création regex ville
-  let cityRegex = RegExp(
-    "^[0-9]{5}[,]{1}[ ]{1}[a-zA-Z-]{2,73}$",
-    "g"
-  );
+  let cityRegex = RegExp("^[0-9]{5}[,]{1}[ ]{1}[a-zA-Z-]{2,73}$", "g");
   let testCity = cityRegex.test(inputCity.value);
   let msg = document.getElementById("cityErrorMsg");
   if (testCity) {
     msg.innerHTML = "";
+    contact.city = form.city.value;
   } else {
     msg.innerHTML = "Ville non trouvée. Exemple: 75000, Paris";
     errorDetection = true;
@@ -128,14 +150,18 @@ const validCity = function (inputCity) {
 // Fonction validation email
 const validEmail = function (inputEmail) {
   //Création regex email
-  let emailRegex = RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9-.]+[.]{1}[a-z]{1,6}$','g');
+  let emailRegex = RegExp(
+    "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9-.]+[.]{1}[a-z]{1,6}$",
+    "g"
+  );
   let testEmail = emailRegex.test(inputEmail.value);
   let msg = document.getElementById("emailErrorMsg");
   if (testEmail) {
     msg.innerHTML = "";
+    contact.email = form.email.value;
   } else {
-    msg.innerHTML = "L'adresse mail n'est pas valide. Exemple: exemple@gmail.com";
+    msg.innerHTML =
+      "L'adresse mail n'est pas valide. Exemple: exemple@gmail.com";
     errorDetection = true;
   }
 };
-

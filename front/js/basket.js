@@ -43,6 +43,7 @@ addToCart.onclick = function (e) {
   } else {
     changeQuantity(product, color, quantity); 
   }
+  location.reload();
 }
 
 // Ajout d'un produit

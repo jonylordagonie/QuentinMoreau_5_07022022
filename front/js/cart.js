@@ -8,21 +8,23 @@ basket = JSON.parse(basket);
 let totalPrice = 0;
 let totalArticle = 0;
 
+
+
+
+
 // Ont créer une boucle pour afficher tout les arrticle de notre panier
 for (let product of basket) {
-  let productID = product.id;
-
   // ont récuprère les information de notre API pour chaque article
-  fetch(`http://localhost:3000/api/products/${productID}`)
+  fetch(`http://localhost:3000/api/products/${product.id}`)
     .then((response) => response.json())
     .then((data) => {
-      totalPrice = totalPrice + product.quantity * data.price;
+      totalPrice += product.quantity * data.price;
 
       // ont multiplie le prix de l'article par sa quantité qu'on ajoute au prix total
       document.getElementById("totalPrice").textContent = totalPrice;
 
       // ont ajoute la quantité d'article ajoute au nombre d'article total
-      totalArticle = totalArticle + product.quantity;
+      totalArticle += product.quantity;
       document.getElementById("totalQuantity").textContent = totalArticle;
 
       //Ont ajoute un élément article avec sa classe et les datas (pour chaque article)
@@ -55,5 +57,41 @@ for (let product of basket) {
       
   // on implémente le tout dans le html
   element.appendChild(childElement);
-  });
+    });
 }
+
+
+
+function setBasket(basket) {
+  localStorage.setItem("basket", JSON.stringify(basket));
+}
+
+function test() {
+  let quantity = document.querySelectorAll("itemQuantity");
+  console.log(quantity)
+  onchange.quantity = function (){
+    let basket = getBasket();
+    let a = e.target.closest("article");
+    const quantityID = a.dataset.id;
+    const quantityColor = a.dataset.color;
+    const porductList = basket.filter((id) => id.id == quantityID);
+    const color = porductList.filter((color) => color.color == quantityColor);
+    color[0].quantity += quantity.value;
+    setBasket(basket);
+  }
+}
+test();
+/**
+const elementsDelete = document.querySelectorAll("#deleteItem");
+onclick = function test(event) {
+  let a = event.target.closest("article");
+  const deleteID = a.dataset.id;
+  const deleteColor = a.dataset.color;
+  const porductList = basket.filter((id) => id.id == deleteID);
+  const color = porductList.filter((color) => color.color == deleteColor);
+  basket = basket.filter((p) => p != color[0]);
+  setBasket(basket);
+  location.reload();
+};
+*/
+
