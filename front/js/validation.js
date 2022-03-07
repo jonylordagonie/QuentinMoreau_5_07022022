@@ -31,7 +31,9 @@ function post() {
     body: JSON.stringify(sendData),
   })
     .then((res) => res.json())
-    .then((data) => {location.href = `./confirmation.html?orderId=${data.orderId}`; });
+    .then((data) => {
+      location.href = `./confirmation.html?orderId=${data.orderId}`;
+    });
 }
 
 order.onclick = function (event) {

@@ -11,17 +11,6 @@ function getBasket() {
     return [];
   } else {
     basket = JSON.parse(basket);
-    basket.sort((a, b) => {
-      let fa = a.id.toLowerCase();
-      let fb = b.id.toLowerCase();
-      if (fa < fb) {
-        return -1;
-      }
-      if (fa > fb) {
-        return 1;
-      }
-      return 0;
-    });
     return basket;
   }
 }
