@@ -1,78 +1,29 @@
 // on récupère le panier et ont le convertit en array
 let basket = JSON.parse(localStorage.getItem("basket"));
-basket.sort((a, b) => {
-  let fa = a.id.toLowerCase();
-  let fb = b.id.toLowerCase();
-  if (fa < fb) {
-    return -1;
-  }
-  if (fa > fb) {
-    return 1;
-  }
-  return 0;
-});
 
+// On tri le panier en fonction de l'id des article
+function tri() {
+  basket.sort((a, b) => {
+    let fa = a.id.toLowerCase();
+    let fb = b.id.toLowerCase();
+    if (fa < fb) {
+      return -1;
+    }
+    if (fa > fb) {
+      return 1;
+    }
+    return 0;
+  });
+}
+
+// si le panier n'as rien on l'initialise
 if (basket == null) {
   basket = [];
   setBasket(basket);
 }
 
-// ont initialise le prix total et le nombre total d'article
-let totalPrice = 0;
-let totalArticle = 0;
-
-
-// Si aucun produit dans le localStorage alors on affiche un message
-if (basket.length !== 0) {
-  // On créé un tableau des Promises (fetch)
-  const reqs = Object.values(basket).map((product) => {
-    return fetch(`http://localhost:3000/api/products/${product.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        // gestion prix total
-        totalPrice += product.quantity * data.price;
-        document.getElementById("totalPrice").textContent = totalPrice;
-
-        // gestion quantité totale
-        totalArticle += product.quantity;
-        document.getElementById("totalQuantity").textContent = totalArticle;
-
-        let el = document.getElementById("cart__items");
-        let childEl = document.createElement("article");
-        childEl.className = "cart__item";
-        childEl.dataset.id = `${product.id}`;
-        childEl.dataset.color = `${product.color}`;
-
-        // création code HTML
-        childEl.innerHTML = `
-          <div class="cart__item__img">
-            <img src="${data.imageUrl}" alt="Photographie d'un canapé">
-          </div>
-          <div class="cart__item__content">
-            <div class="cart__item__content__description">
-              <h2>${data.name}</h2>
-              <p>${product.color}</p>
-              <p>${data.price} €</p>
-            </div>
-            <div class="cart__item__content__settings">
-              <div class="cart__item__content__settings__quantity">
-                <p>Qté : </p>
-                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${product.quantity}">
-              </div>
-              <div class="cart__item__content__settings__delete">
-                <p class="deleteItem">Supprimer</p>
-              </div>
-            </div>
-          </div>
-        `;
-
-        // on ajoute le tout dans l'html
-        el.appendChild(childEl);
-      });
-  });
-  // Promesse qui est résolé loreque l'ensemble des promesses dans reqs sont résolues
-  Promise.all(reqs).then(() => initEvents());
-} else {
+// si le panier est vide on l'affiche au client
+if (basket.length == 0) {
   document.getElementById("cart__items").innerHTML = `<style>
       h3{
         color: #DE1B1B;
@@ -82,9 +33,10 @@ if (basket.length !== 0) {
     <h3> <center>Votre panier est vide.</center></h3> `;
 }
 
-
+// Fonction permettant de sauvegarder le localstorage
 function setBasket(basket) {
   localStorage.setItem("basket", JSON.stringify(basket));
+  // on reload la page pour qu'a chaque fois que le local storage change l'affichage soit le bon
   location.reload();
 }
 
@@ -108,13 +60,19 @@ function initEvents() {
 
 // fonction de suppression d'un produit
 function deleteProduct(event) {
+  // on récupère l'article parent de la ou on clique
   let article = event.target.closest("article");
+  // on récupère l'id via le dataset
   let deleteId = article.dataset.id;
+  // on récupère la couleur via le dataset
   let color = article.dataset.color;
+  // on créer une constant qui corespond à un tableau des id correspondante à l'id de notre article
   const productList = basket.filter((product) => product.id == deleteId);
+  // dans le nouveau tableau on récupère uniquement celui qui à la couleur de notre article
   const prodToDelete = productList.filter((product) => product.color == color);
   // basket vaut à présent la liste des produits du localStorage sans le produit "prodToDelete[0]"
   basket = basket.filter((p) => p != prodToDelete[0]);
+  // on appel la fonction de sauvegarde de notre panier
   setBasket(basket);
 }
 
@@ -130,12 +88,91 @@ function changeQty(event) {
   setBasket(basket);
 }
 
-function getBasket() {
-  basket = localStorage.getItem("basket");
-  if (basket == null) {
-    return [];
-  } else {
-    basket = JSON.parse(basket);
-    return basket;
-  }
+
+// fonction permettant de récupérer les information de l'API
+async function getProducts() {
+  return fetch(`http://localhost:3000/api/products/`)
+    .then((res) => res.json())
+    .then((data) => data)
+    .catch(function (err) {
+      document.getElementById("cart__items").innerHTML = `<style>
+        h3{
+          color: #DE1B1B;
+          text-decoration: underline;
+        }
+        </style>
+        <h3> <center>Une erreur de chargement est survenue. Nous sommes désolés pour cet incident !</center></h3> `;
+    });
 }
+
+// Fonction qui va attendre les information de l'API puis vas filtrer pour récuprer uniquement celles des article qu'on veux
+async function displayAllProducts() {
+  // Ont créer une constante qui récupère les information de l'API
+  const products = await getProducts();
+  // On créer une boucle dans le panier
+  for (let productToDisplay of basket) {
+    // ont créer une constante qui permet de filtrer et de prendre les info qui concerne uniquement le produit que nous avons dans le panier
+    const product = products.filter((p) => p._id === productToDisplay.id);
+    //On appel la fonction displayProduct avec les paramètre
+    displayProducts(product[0], productToDisplay);
+  }
+  return;
+}
+
+async function totalArticle() {
+  let totalArticle = 0;
+  for (let article of basket) {
+    totalArticle += article.quantity;
+  }
+  document.getElementById("totalQuantity").textContent = totalArticle;
+}
+
+async function totalPrice() {
+  const products = await getProducts();
+  let totalPrice = 0;
+  for (let article of basket) {
+    const product = products.filter((p) => p._id === article.id);
+    totalPrice += article.quantity * product[0].price;
+  }
+  document.getElementById("totalPrice").textContent = totalPrice;
+}
+
+const displayProducts = (products, productToDisplay) => {
+  let childElement = document.createElement("article");
+  childElement.classList.add("cart__item");
+  childElement.dataset.id = productToDisplay.id;
+  childElement.dataset.color = productToDisplay.color;
+
+  childElement.innerHTML = `<div class="cart__item__img">
+      <img src=${products.imageUrl} alt=${products.altTxt}>
+    </div>
+    <div class="cart__item__content">
+      <div class="cart__item__content__description">
+        <h2>${products.name}</h2>
+        <p>${productToDisplay.color}</p>
+        <p>${products.price}€</p>
+      </div>
+      <div class="cart__item__content__settings">
+        <div class="cart__item__content__settings__quantity">
+          <p>Qté : </p>
+          <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value=${productToDisplay.quantity}>
+        </div>
+        <div class="cart__item__content__settings__delete">
+          <p class="deleteItem">Supprimer</p>
+        </div>
+      </div>
+    </div>`;
+  let el = document.getElementById("cart__items");
+  el.appendChild(childElement);
+};
+
+// On appel notre fonction
+async function main() {
+  tri();
+  await displayAllProducts();
+  await totalArticle();
+  await totalPrice();
+  initEvents();
+}
+
+main();

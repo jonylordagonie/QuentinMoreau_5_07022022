@@ -1,9 +1,25 @@
+async function getProducts(){
+  return fetch(`http://localhost:3000/api/products`)
+    .then(res => res.json())
+    .then(data => data)
+    .catch(function (err) {
+      console.log('erreur')
+        let addElement = document.getElementById("items");
+      addElement.innerHTML = 
+        `<style>
+          h3{
+          color: #DE1B1B;
+          text-decoration: underline;
+        }
+        </style>
+        <h3> <center>Une erreur de chargement est survenue. Nous sommes désolés pour cet incident !</center></h3>`;
+    });
+} 
+
 // On créer une foction pour executer le code de façon asyncrone
-async function productAsync() {
+const displayProducts = (allProducts) => {
   // on appel l'api et on recupere les donnés
-  let reponse = await fetch("http://localhost:3000/api/products/");
-  let data = await reponse.json();
-  for (let product of data) {
+  for (let product of allProducts) {
     let element = document.getElementById("items");
 
     // Créer balise a redirigent vers la page product avec l'id personnaliser du produit
@@ -22,5 +38,10 @@ async function productAsync() {
   }
 }
 
+const main = async () => {
+  const allProducts = await getProducts();
+  displayProducts(allProducts);
+};
+
 // On appel notre fonction
-productAsync();
+main();

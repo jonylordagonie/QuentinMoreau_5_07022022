@@ -10,7 +10,10 @@ async function productAsync() {
 // récupération des donnés du produit
 function getProduct(idProduct) {
   return fetch(`http://localhost:3000/api/products/${idProduct}`)
-    .then((reponse) => reponse.json());
+    .then((reponse) => reponse.json())
+    .catch(function (error) {
+      window.alert("Une erreur de chargement est survenue. Nous sommes désolés pour cet incident !");
+    });
 }
 
 // implémentation des donnés dans le html
