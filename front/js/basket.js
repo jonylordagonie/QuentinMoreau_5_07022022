@@ -28,11 +28,11 @@ addToCart.onclick = function (e) {
   }
   if (color == "" || quantity <= 0 || quantity > 100) {
     console.log('manque couleur')
-    alert("Veuillez sélectionner une couleur et un nombre d'article !");
+    alert("Veuillez sélectionner une couleur et un nombre correcte d'article !");
   } else {
-    changeQuantity(product, color, quantity); 
+    changeQuantity(product, color, quantity);
+    location.reload();
   }
-  location.reload();
 }
 
 // Ajout d'un produit

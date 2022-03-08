@@ -5,14 +5,15 @@ async function getProducts(){
     .catch(function (err) {
       console.log('erreur')
         let addElement = document.getElementById("items");
-      addElement.innerHTML = 
-        `<style>
-          h3{
-          color: #DE1B1B;
+      addElement.innerHTML = `<style>
+          .error{
+          color: #ffffff;
           text-decoration: underline;
+          font-weight: bold;
+          background: #DE1B1B
         }
         </style>
-        <h3> <center>Une erreur de chargement est survenue. Nous sommes désolés pour cet incident !</center></h3>`;
+        <h2 class="error"> <center>Une erreur de chargement est survenue. Nous sommes désolés pour cet incident !</center></h3>`;
     });
 } 
 

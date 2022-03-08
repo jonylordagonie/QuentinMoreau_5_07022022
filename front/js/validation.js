@@ -1,7 +1,6 @@
 let form = document.querySelector(".cart__order__form");
 let errorDetection = false;
 
-
 // Récupération de ton les IDs du panier
 const allId = [];
 for (let i of basket) {
@@ -9,8 +8,7 @@ for (let i of basket) {
 }
 
 // Constante des information contact (qui vont se remplir au moment du onclick sur le panier)
-const contact = { 
-};
+const contact = {};
 
 // Constante des information à envoyer à l'API
 const sendData = {
@@ -21,7 +19,7 @@ const sendData = {
 // Fonction permettant d'envoyer les informations à l'API
 function post() {
   const headers = new Headers();
-  console.log('post')
+  console.log("post");
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
     headers: {
@@ -42,6 +40,7 @@ order.onclick = function (event) {
   validAddress(form.address);
   validCity(form.city);
   validEmail(form.email);
+  validBasket();
   // test si une erreur à été detecter dans les différent champs de saisi
   if (errorDetection) {
     // Si il y as une erreur on desactive l'effet du boutton
@@ -167,3 +166,17 @@ const validEmail = function (inputEmail) {
     errorDetection = true;
   }
 };
+
+const validBasket = function () {
+  for (let product of basket) {
+    if (product.quantity > 100) {
+      errorDetection = true;
+      alert("Un article à une quantité trop important (supérieur à 100)")
+    } else {
+      if (product.quantity <= 0) {
+        errorDetection = true;
+        alert("Un article à une quantité basse (inférieur à 1)");
+      }
+    }
+  }
+}

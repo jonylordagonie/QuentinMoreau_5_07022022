@@ -12,7 +12,18 @@ function getProduct(idProduct) {
   return fetch(`http://localhost:3000/api/products/${idProduct}`)
     .then((reponse) => reponse.json())
     .catch(function (error) {
-      window.alert("Une erreur de chargement est survenue. Nous sommes désolés pour cet incident !");
+      alert("Une erreur de chargement est survenue. Nous sommes désolés pour cet incident !");
+      let addElement = document.getElementById("title");
+      addElement.classList = "error"
+      addElement.innerHTML = `<style>
+          .error{
+          color: #ffffff;
+          text-decoration: underline;
+          font-weight: bold;
+          background: #DE1B1B
+        }
+        </style>
+        <center>Une erreur de chargement est survenue. Nous sommes désolés pour cet incident !</center>`;
     });
 }
 

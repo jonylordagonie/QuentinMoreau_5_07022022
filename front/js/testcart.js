@@ -74,12 +74,14 @@ if (basket.length !== 0) {
   Promise.all(reqs).then(() => initEvents());
 } else {
   document.getElementById("cart__items").innerHTML = `<style>
-      h3{
-        color: #DE1B1B;
-        text-decoration: underline;
+      h2{
+        color: #ffffff;
+          text-decoration: underline;
+          font-weight: bold;
+          background: #DE1B1B
       }
      </style>
-    <h3> <center>Votre panier est vide.</center></h3> `;
+    <h2 class="error"><center>Votre panier est vide.</center></h3> `;
 }
 
 function setBasket(basket) {

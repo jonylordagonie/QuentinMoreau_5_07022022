@@ -83,9 +83,16 @@ function changeQty(event) {
   let color = article.dataset.color;
   const productList = basket.filter((product) => product.id == selectedId);
   const selectedProd = productList.filter((product) => product.color == color);
-  // on modifie l'attribut quantité du produit
-  selectedProd[0].quantity = parseInt(event.target.value);
-  setBasket(basket);
+  if (event.target.value >= 100 || event.target.value <= 0) {
+    alert(
+      "Veuillez sélectionner un nombre correcte d'article !"
+    );
+    event.target.value = selectedProd[0].quantity;
+  } else {
+    // on modifie l'attribut quantité du produit
+    selectedProd[0].quantity = parseInt(event.target.value);
+    setBasket(basket);
+  }
 }
 
 // fonction permettant de récupérer les information de l'API
@@ -94,13 +101,18 @@ async function getProducts() {
     .then((res) => res.json())
     .then((data) => data)
     .catch(function (err) {
+      window.alert(
+        "Une erreur de chargement est survenue. Nous sommes désolés pour cet incident !"
+      );
       document.getElementById("cart__items").innerHTML = `<style>
-        h3{
-          color: #DE1B1B;
+        .error{
+          color: #ffffff;
           text-decoration: underline;
+          font-weight: bold;
+          background: #DE1B1B;
         }
         </style>
-        <h3> <center>Une erreur de chargement est survenue. Nous sommes désolés pour cet incident !</center></h3> `;
+        <h2 class="error"><center>Une erreur de chargement est survenue. Nous sommes désolés pour cet incident !</center></h2> `;
     });
 }
 
@@ -118,7 +130,7 @@ async function displayAllProducts() {
   return;
 }
 
-async function totalArticle() {
+function totalArticle() {
   let totalArticle = 0;
   for (let article of basket) {
     totalArticle += article.quantity;
