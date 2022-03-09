@@ -25,12 +25,13 @@ if (basket == null) {
 // si le panier est vide on l'affiche au client
 if (basket.length == 0) {
   document.getElementById("cart__items").innerHTML = `<style>
-      h3{
-        color: #DE1B1B;
+      .alert{
+        color: #ffffff;
         text-decoration: underline;
+        text-weight: bold;
       }
      </style>
-    <h3> <center>Votre panier est vide.</center></h3> `;
+    <h2 class="alert"> <center>Votre panier est vide.</center></h2> `;
 }
 
 // Fonction permettant de sauvegarder le localstorage

@@ -1,12 +1,6 @@
 // Récupération de l'id via l'URL
 let idProduct = new URLSearchParams(location.search).get("id");
 
-// Mise en async des fonction + tranformation de la promise.json en objet
-async function productAsync() {
-  const product = await getProduct(idProduct);
-  putData(product);
-}
-
 // récupération des donnés du produit
 function getProduct(idProduct) {
   return fetch(`http://localhost:3000/api/products/${idProduct}`)
@@ -50,6 +44,10 @@ function putData(product) {
   document.getElementById("description").textContent = product.description;
 
   //option
+  option(product);
+}
+
+function option(product) {
   let i = 0;
   for (let options of product.colors) {
     let element = document.getElementById("colors");
@@ -60,4 +58,10 @@ function putData(product) {
   }
 }
 
-productAsync();
+// Mise en async des fonction + tranformation de la promise.json en objet
+async function main() {
+  const product = await getProduct(idProduct);
+  putData(product);
+}
+
+main();

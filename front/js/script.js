@@ -1,10 +1,10 @@
-async function getProducts(){
+async function getProducts() {
   return fetch(`http://localhost:3000/api/products`)
-    .then(res => res.json())
-    .then(data => data)
+    .then((res) => res.json())
+    .then((data) => data)
     .catch(function (err) {
-      console.log('erreur')
-        let addElement = document.getElementById("items");
+      console.log("erreur");
+      let addElement = document.getElementById("items");
       addElement.innerHTML = `<style>
           .error{
           color: #ffffff;
@@ -15,10 +15,10 @@ async function getProducts(){
         </style>
         <h2 class="error"> <center>Une erreur de chargement est survenue. Nous sommes désolés pour cet incident !</center></h3>`;
     });
-} 
+}
 
 // On créer une foction pour executer le code de façon asyncrone
-const displayProducts = (allProducts) => {
+async function displayProducts (allProducts){
   // on appel l'api et on recupere les donnés
   for (let product of allProducts) {
     let element = document.getElementById("items");
@@ -33,16 +33,16 @@ const displayProducts = (allProducts) => {
     <h3 class="productName">${product.name}</h3>
     <p class="productDescription">${product.description}</p>
   </article>`;
-    
+
     // on implémente le tout dans le html
     element.appendChild(childElement);
   }
-}
-
-const main = async () => {
-  const allProducts = await getProducts();
-  displayProducts(allProducts);
 };
+
+async function main() {
+  const allProducts = await getProducts();
+  await displayProducts(allProducts);
+}
 
 // On appel notre fonction
 main();

@@ -1,5 +1,4 @@
 // Création du localstorage en json
-
 function setBasket(basket) {
   localStorage.setItem("basket", JSON.stringify(basket));
 }
@@ -16,7 +15,7 @@ function getBasket() {
 }
 
 // Ajout des articles lors du click sur le bouton.
-addToCart.onclick = function (e) {
+addToCart.onclick = function () {
   let color = document.getElementById("colors").value;
   let quantity = document.getElementById("quantity").value;
   quantity = parseInt(quantity);
